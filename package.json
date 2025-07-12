@@ -12,7 +12,6 @@
       "productName": "Imprimir PDF",
       "files": [
         "main.js",
-        "pdf-server.js",
         "PDFtoPrinter.exe",
         "icon.png",
         "node_modules/**/*",
