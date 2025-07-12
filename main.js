@@ -113,6 +113,12 @@ function createTray() {
 }
 
 app.whenReady().then(() => {
+  // 🟢 Enable autostart at login
+  app.setLoginItemSettings({
+    openAtLogin: true,
+    path: process.execPath,
+  });
+
   createTray();
   createServer();
 });

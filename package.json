@@ -20,6 +20,17 @@
       "win": {
         "target": "nsis",
         "icon": "icon.ico"
+      },
+      "nsis": {
+        "oneClick": true,
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true,
+        "shortcutName": "Imprimir PDF"
+      },
+      "extraMetadata": {
+        "build": {
+          "startOnLogin": true
+        }
       }
     },
     "dependencies": {
