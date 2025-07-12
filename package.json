@@ -7,7 +7,9 @@
         "start": "node pdf-server.js",
         "build": "pkg"
     },
-    "bin": "pdf-server.js",
+    "bin": {
+        "imprimir-pdf": "pdf-server.js"
+    },
     "dependencies": {
         "pdf-lib": "^1.17.1"
     },
