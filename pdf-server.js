@@ -3,12 +3,17 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
 const { exec } = require("child_process");
 const { PDFDocument, degrees } = require("pdf-lib");
 
 const PORT = 3011;
-const TEMP_FILE = path.join(__dirname, "temp.pdf");
-const PDFTOPRINTER_PATH = path.join(__dirname, "PDFtoPrinter.exe"); // Bundle this alongside the exe
+
+// Use system temp folder for compatibility with pkg builds
+const TEMP_FILE = path.join(os.tmpdir(), "temp.pdf");
+
+// Path to PDFtoPrinter.exe (must be next to the .exe when packaged)
+const PDFTOPRINTER_PATH = path.join(process.cwd(), "PDFtoPrinter.exe");
 
 function printPDF(filePath, callback) {
   if (fs.existsSync(PDFTOPRINTER_PATH)) {
@@ -36,7 +41,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "POST" && req.url === "/imprimir-pdf") {
     let data = [];
 
-    req.on("data", chunk => data.push(chunk));
+    req.on("data", (chunk) => data.push(chunk));
     req.on("end", async () => {
       const buffer = Buffer.concat(data);
 
@@ -46,7 +51,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       try {
-        // Save original
+        // Save original PDF to temp file
         fs.writeFileSync(TEMP_FILE, buffer);
 
         // Rotate landscape pages
