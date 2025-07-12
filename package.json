@@ -4,36 +4,34 @@
     "description": "Silent PDF print server with tray icon",
     "main": "main.js",
     "scripts": {
-      "start": "electron .",
-      "build": "electron-builder"
+        "start": "electron .",
+        "build": "electron-builder"
     },
     "build": {
-      "appId": "com.yourcompany.imprimirpdf",
-      "productName": "Imprimir PDF",
-      "files": [
-        "main.js",
-        "PDFtoPrinter.exe",
-        "icon.png",
-        "node_modules/**/*",
-        "package.json"
-      ],
-      "win": {
-        "target": "nsis",
-        "icon": "icon.ico"
-      },
-      "nsis": {
-        "oneClick": true,
-        "createDesktopShortcut": true,
-        "createStartMenuShortcut": true,
-        "shortcutName": "Imprimir PDF"
-      }
+        "appId": "com.yourcompany.imprimirpdf",
+        "productName": "Imprimir PDF",
+        "files": [
+            "main.js",
+            "PDFtoPrinter.exe",
+            "icon.png",
+            "node_modules/**/*",
+            "package.json"
+        ],
+        "win": {
+            "target": "nsis"
+        },
+        "nsis": {
+            "oneClick": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "Imprimir PDF"
+        }
     },
     "dependencies": {
-      "pdf-lib": "^1.17.1"
+        "pdf-lib": "^1.17.1"
     },
     "devDependencies": {
-      "electron": "^29.0.0",
-      "electron-builder": "^24.0.0"
+        "electron": "^29.0.0",
+        "electron-builder": "^24.0.0"
     }
-  }
-  
+}
