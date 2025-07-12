@@ -5,11 +5,9 @@
     "main": "pdf-server.js",
     "scripts": {
         "start": "node pdf-server.js",
-        "build": "pkg"
+        "build": "pkg pdf-server.js --targets node18-win-x64-windows --output imprimir-pdf.exe"
     },
-    "bin": {
-        "imprimir-pdf": "pdf-server.js"
-    },
+    "bin": "pdf-server.js",
     "dependencies": {
         "pdf-lib": "^1.17.1"
     },
