@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -9,12 +7,18 @@ const { PDFDocument, degrees } = require("pdf-lib");
 
 const PORT = 3011;
 const TEMP_FILE = path.join(os.tmpdir(), "temp.pdf");
+
+// Use temp directory for extracted print tool
 const PDFTOPRINTER_PATH = path.join(os.tmpdir(), "PDFtoPrinter.exe");
 
-// Extract PDFtoPrinter.exe from bundled resources (only once)
+// Extract the printer tool if needed (only once)
 if (!fs.existsSync(PDFTOPRINTER_PATH)) {
-  const binary = fs.readFileSync(path.join(__dirname, "PDFtoPrinter.exe")); // bundled via --resource
-  fs.writeFileSync(PDFTOPRINTER_PATH, binary);
+  try {
+    const embeddedPrinter = fs.readFileSync(path.join(__dirname, "PDFtoPrinter.exe"));
+    fs.writeFileSync(PDFTOPRINTER_PATH, embeddedPrinter);
+  } catch (err) {
+    console.error("❌ Failed to extract PDFtoPrinter.exe:", err);
+  }
 }
 
 function printPDF(filePath, callback) {
@@ -22,6 +26,7 @@ function printPDF(filePath, callback) {
     const cmd = `"${PDFTOPRINTER_PATH}" "${filePath}"`;
     exec(cmd, callback);
   } else {
+    // Fallback to default PDF viewer
     const fallbackCmd = `start /min "" /print "${filePath}"`;
     exec(fallbackCmd, callback);
   }
