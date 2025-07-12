@@ -5,7 +5,7 @@
     "main": "pdf-server.js",
     "scripts": {
         "start": "node pdf-server.js",
-        "build": "pkg ."
+        "build": "npx nexe -i pdf-server.js -o dist/imprimir-pdf.exe --target windows-x64-18 --resource PDFtoPrinter.exe"
     },
     "bin": {
         "imprimir-pdf": "pdf-server.js"
@@ -23,5 +23,8 @@
         "outputPath": "dist"
     },
     "author": "Your Name",
-    "license": "MIT"
+    "license": "MIT",
+    "devDependencies": {
+        "nexe": "^5.0.0-beta.4"
+    }
 }

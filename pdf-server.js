@@ -8,27 +8,26 @@ const { exec } = require("child_process");
 const { PDFDocument, degrees } = require("pdf-lib");
 
 const PORT = 3011;
-
-// Use system temp folder for compatibility with pkg builds
 const TEMP_FILE = path.join(os.tmpdir(), "temp.pdf");
+const PDFTOPRINTER_PATH = path.join(os.tmpdir(), "PDFtoPrinter.exe");
 
-// Path to PDFtoPrinter.exe (must be next to the .exe when packaged)
-const PDFTOPRINTER_PATH = path.join(process.cwd(), "PDFtoPrinter.exe");
+// Extract PDFtoPrinter.exe from bundled resources (only once)
+if (!fs.existsSync(PDFTOPRINTER_PATH)) {
+  const binary = fs.readFileSync(path.join(__dirname, "PDFtoPrinter.exe")); // bundled via --resource
+  fs.writeFileSync(PDFTOPRINTER_PATH, binary);
+}
 
 function printPDF(filePath, callback) {
   if (fs.existsSync(PDFTOPRINTER_PATH)) {
-    // Use PDFtoPrinter.exe
     const cmd = `"${PDFTOPRINTER_PATH}" "${filePath}"`;
     exec(cmd, callback);
   } else {
-    // Fallback: use Windows ShellExecute
     const fallbackCmd = `start /min "" /print "${filePath}"`;
     exec(fallbackCmd, callback);
   }
 }
 
 const server = http.createServer(async (req, res) => {
-  // Handle CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -41,7 +40,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "POST" && req.url === "/imprimir-pdf") {
     let data = [];
 
-    req.on("data", (chunk) => data.push(chunk));
+    req.on("data", chunk => data.push(chunk));
     req.on("end", async () => {
       const buffer = Buffer.concat(data);
 
@@ -51,10 +50,8 @@ const server = http.createServer(async (req, res) => {
       }
 
       try {
-        // Save original PDF to temp file
         fs.writeFileSync(TEMP_FILE, buffer);
 
-        // Rotate landscape pages
         const pdfDoc = await PDFDocument.load(buffer);
         const pages = pdfDoc.getPages();
         for (const page of pages) {
@@ -67,12 +64,10 @@ const server = http.createServer(async (req, res) => {
         const rotatedBytes = await pdfDoc.save();
         fs.writeFileSync(TEMP_FILE, rotatedBytes);
 
-        // Print and clean up
         printPDF(TEMP_FILE, (err) => {
           if (fs.existsSync(TEMP_FILE)) fs.unlinkSync(TEMP_FILE);
 
           if (err) {
-            console.error("Error imprimiendo:", err);
             res.writeHead(500, { "Content-Type": "text/plain" });
             return res.end("Error imprimiendo PDF");
           }
@@ -81,7 +76,6 @@ const server = http.createServer(async (req, res) => {
           res.end("PDF impreso correctamente");
         });
       } catch (err) {
-        console.error("Error en el servidor:", err);
         res.writeHead(500, { "Content-Type": "text/plain" });
         res.end("Error procesando el PDF");
       }
@@ -92,6 +86,4 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`🖨️ Servidor PDF escuchando en http://localhost:${PORT}`);
-});
+server.listen(PORT);
