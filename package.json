@@ -1,0 +1,25 @@
+{
+    "name": "imprimir-pdf",
+    "version": "1.0.0",
+    "description": "Lightweight PDF print server using pdf-lib and PDFtoPrinter",
+    "main": "pdf-server.js",
+    "scripts": {
+        "start": "node pdf-server.js",
+        "build": "pkg pdf-server.js --targets node18-win-x64 --output imprimir-pdf.exe"
+    },
+    "bin": "pdf-server.js",
+    "dependencies": {
+        "pdf-lib": "^1.17.1"
+    },
+    "pkg": {
+        "assets": [
+            "PDFtoPrinter.exe"
+        ],
+        "targets": [
+            "node18-win-x64"
+        ],
+        "outputPath": "dist"
+    },
+    "author": "Your Name",
+    "license": "MIT"
+}
